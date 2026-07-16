@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Partnership HQ</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ü§ù</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>">
 <style>
   :root{
     --bg:#F2F5F3; --surface:#FFFFFF; --surface-2:#EAEFEC;
@@ -287,7 +287,7 @@ function startOfWeek(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate
 function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
 const DAY_NAMES=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const fmtShort=s=>{const d=new Date(s+"T00:00:00");return d.toLocaleDateString("en-GB",{day:"numeric",month:"short"})};
-const fmtRange=(a,b)=>fmtShort(iso(a))+" ‚Äì "+b.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const fmtRange=(a,b)=>fmtShort(iso(a))+" – "+b.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
 
 /* ---- state ---- */
 let state=load();
@@ -311,7 +311,7 @@ function seed(){
     P("JD Sports","Sports retail","Marcus O.","Sponsorship Manager","Negotiation",20000,"High","Negotiate kit + prize bundle terms",2,""),
     P("Moneybox","Fintech","Priya S.","Marketing Director","Meeting",8000,"Medium","Prep deck for intro call",3,""),
     P("Monzo","Fintech","Alex D.","Community Lead","Contacted",12000,"Medium","Follow up on LinkedIn outreach",4,""),
-    P("New Balance","Sports retail","‚Äî","","Prospect",10000,"Low","Find warm intro via The Locker Room",8,""),
+    P("New Balance","Sports retail","—","","Prospect",10000,"Low","Find warm intro via The Locker Room",8,""),
     P("Revolut","Fintech","Jade M.","Youth Marketing","Won",18000,"Medium","Kick-off call for activation delivery",5,"Signed for two-year Pathways activation.")
   ];
   const T=(title,offset,partnerIdx,priority,done)=>({
@@ -333,7 +333,7 @@ function seed(){
 const partner=id=>state.partners.find(p=>p.id===id);
 const tasksFor=id=>state.tasks.filter(t=>t.partnerId===id);
 function dueClass(d){if(!d)return"";const t=todayIso();return d<t?"due-overdue":d===t?"due-today":""}
-function dueWord(d){if(!d)return"";const t=todayIso();return d<t?"Overdue ¬∑ "+fmtShort(d):d===t?"Today":fmtShort(d)}
+function dueWord(d){if(!d)return"";const t=todayIso();return d<t?"Overdue · "+fmtShort(d):d===t?"Today":fmtShort(d)}
 function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
 function partnerOptions(sel){
   const opts=state.partners.filter(p=>p.stage!=="Lost").sort((a,b)=>a.brand.localeCompare(b.brand))
@@ -350,8 +350,8 @@ let pendingPush=false,pushTimer=null,lastServerStamp=null;
 function setSync(s){
   const dot=$("#syncDot"),label=$("#syncLabel");if(!dot)return;
   dot.className="sync-dot "+(s==="ok"?"ok":s==="saving"?"saving":s==="offline"?"offline":"");
-  label.textContent=s==="ok"?"Synced":s==="saving"?"Saving‚Ä¶":s==="offline"?"Offline":"Sync";
-  $("#syncBtn").title=s==="offline"?"Can't reach the server ‚Äî changes are saved on this device and will sync when you're back online":"Sync settings";
+  label.textContent=s==="ok"?"Synced":s==="saving"?"Saving…":s==="offline"?"Offline":"Sync";
+  $("#syncBtn").title=s==="offline"?"Can't reach the server — changes are saved on this device and will sync when you're back online":"Sync settings";
 }
 function genCode(){
   const cs="ABCDEFGHJKMNPQRSTVWXYZ23456789";
@@ -403,7 +403,7 @@ function showSetup(){
     <div class="m-sub">Your data is stored online, protected by a sync code. Use the same code on every device to see the same data.</div>
     <div class="setup-choice">
       <h3>First time here?</h3>
-      <p>Create a new sync code. Keep it somewhere safe ‚Äî it's the key to your data.</p>
+      <p>Create a new sync code. Keep it somewhere safe — it's the key to your data.</p>
       <button class="btn primary" data-setup="new">Create my sync code</button>
     </div>
     <div class="or-rule">OR</div>
@@ -426,8 +426,8 @@ function showSetup(){
   o.querySelector("#setupConnect").addEventListener("submit",async e=>{
     e.preventDefault();
     const code=new FormData(e.target).get("code").trim().toUpperCase();
-    if(code.length<8){alert("That code looks too short ‚Äî check it and try again.");return}
-    const btn=e.target.querySelector("button");btn.disabled=true;btn.textContent="Connecting‚Ä¶";
+    if(code.length<8){alert("That code looks too short — check it and try again.");return}
+    const btn=e.target.querySelector("button");btn.disabled=true;btn.textContent="Connecting…";
     try{
       const j=await apiGet(code);
       if(j.found){
@@ -435,7 +435,7 @@ function showSetup(){
         state=j.data;if(!state.meta)state.meta={};
         lastServerStamp=j.updated_at;
         localStorage.setItem(KEY,JSON.stringify(state));
-        closeModal(true);render();setSync("ok");toast("Connected ‚Äî your data is here");
+        closeModal(true);render();setSync("ok");toast("Connected — your data is here");
       }else if(confirm("No data found for that code. Start a fresh tracker under it?")){
         syncCode=code;localStorage.setItem(CODE_KEY,code);
         push(false);closeModal(true);render();
@@ -452,7 +452,7 @@ function showSyncSettings(isNew){
   o.className="overlay";o.id="overlay";
   o.innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-label="Sync settings">
     <h2>${isNew?"You're all set":"Sync settings"}</h2>
-    <div class="m-sub">${isNew?"This is your sync code. Save it somewhere safe (Notes, password manager) ‚Äî you'll type it once on each new device.":"This device is synced. Enter the same code on any other device to share the data."}</div>
+    <div class="m-sub">${isNew?"This is your sync code. Save it somewhere safe (Notes, password manager) — you'll type it once on each new device.":"This device is synced. Enter the same code on any other device to share the data."}</div>
     <div class="code-box" id="codeBox">${esc(syncCode)}</div>
     <div class="modal-actions">
       ${isNew?"":'<button type="button" class="danger" data-action="sync-disconnect">Disconnect this device</button>'}
@@ -490,14 +490,14 @@ function renderDashboard(){
     const v=list.reduce((a,p)=>a+(+p.value||0),0);
     return `<div class="bar-row"><span class="b-label">${s}</span>
       <span class="bar-track"><span class="bar-fill" style="width:${list.length/maxCount*100}%"></span></span>
-      <span class="b-val num">${list.length} ¬∑ ${money(v)}</span></div>`;
+      <span class="b-val num">${list.length} · ${money(v)}</span></div>`;
   }).join("");
 
   const next=state.partners.filter(p=>ACTIVE.includes(p.stage)&&p.nextAction)
     .sort((a,b)=>(a.nextActionDate||"9999")<(b.nextActionDate||"9999")?-1:1).slice(0,6)
     .map(p=>`<div class="mini-item"><div class="grow">
         <div class="t">${esc(p.nextAction)}</div>
-        <div class="s">${esc(p.brand)} ¬∑ <span class="${dueClass(p.nextActionDate)}">${dueWord(p.nextActionDate)||"No date"}</span></div>
+        <div class="s">${esc(p.brand)} · <span class="${dueClass(p.nextActionDate)}">${dueWord(p.nextActionDate)||"No date"}</span></div>
       </div><button class="pill stage-${p.stage}" data-action="open-partner" data-id="${p.id}">${p.stage}</button></div>`).join("");
 
   const weekTasks=state.tasks.filter(x=>!x.done&&x.date>=monI&&x.date<=sun)
@@ -505,7 +505,7 @@ function renderDashboard(){
     .map(x=>{const p=x.partnerId?partner(x.partnerId):null;
       return `<div class="mini-item"><input type="checkbox" data-action="toggle-task" data-id="${x.id}" aria-label="Mark done">
         <div class="grow"><div class="t">${esc(x.title)}</div>
-        <div class="s"><span class="${dueClass(x.date)}">${DAY_NAMES[(new Date(x.date+"T00:00:00").getDay()+6)%7]}</span>${p?" ¬∑ "+esc(p.brand):""}</div></div></div>`}).join("");
+        <div class="s"><span class="${dueClass(x.date)}">${DAY_NAMES[(new Date(x.date+"T00:00:00").getDay()+6)%7]}</span>${p?" · "+esc(p.brand):""}</div></div></div>`}).join("");
 
   return `
     <div class="kpis">
@@ -532,8 +532,8 @@ function renderPipeline(){
       const lt=tasksFor(p.id).filter(x=>!x.done).length;
       return `<div class="card" draggable="true" data-card="${p.id}" data-action="open-partner" data-id="${p.id}" tabindex="0" role="button" aria-label="Open ${esc(p.brand)}">
         <div class="c-brand"><span>${esc(p.brand)}</span><span class="c-value num">${p.value?money(p.value):""}</span></div>
-        <div class="c-meta">${esc(p.contact||"No contact")}${p.role?" ¬∑ "+esc(p.role):""}</div>
-        ${p.nextAction?`<div class="c-next"><b>Next:</b> ${esc(p.nextAction)}${p.nextActionDate?` ¬∑ <span class="${dueClass(p.nextActionDate)}">${dueWord(p.nextActionDate)}</span>`:""}</div>`:""}
+        <div class="c-meta">${esc(p.contact||"No contact")}${p.role?" · "+esc(p.role):""}</div>
+        ${p.nextAction?`<div class="c-next"><b>Next:</b> ${esc(p.nextAction)}${p.nextActionDate?` · <span class="${dueClass(p.nextActionDate)}">${dueWord(p.nextActionDate)}</span>`:""}</div>`:""}
         <div class="c-foot"><span class="pill prio-${p.priority}">${p.priority}</span>${lt?`<span class="pill" style="background:var(--surface-2);color:var(--ink-2)">${lt} task${lt===1?"":"s"}</span>`:""}</div>
       </div>`}).join("");
     return `<div class="col" data-col="${s}">
@@ -551,18 +551,18 @@ function renderPartners(){
     .sort((a,b)=>STAGES.indexOf(a.stage)-STAGES.indexOf(b.stage)||a.brand.localeCompare(b.brand));
   const rows=list.map(p=>`<tr data-action="open-partner" data-id="${p.id}" tabindex="0">
       <td><strong>${esc(p.brand)}</strong><div style="font-size:12.5px;color:var(--ink-2)">${esc(p.sector||"")}</div></td>
-      <td>${esc(p.contact||"‚Äî")}<div style="font-size:12.5px;color:var(--ink-2)">${esc(p.role||"")}</div></td>
+      <td>${esc(p.contact||"—")}<div style="font-size:12.5px;color:var(--ink-2)">${esc(p.role||"")}</div></td>
       <td><span class="pill stage-${p.stage}">${p.stage}</span></td>
-      <td class="r num">${p.value?money(p.value):"‚Äî"}</td>
+      <td class="r num">${p.value?money(p.value):"—"}</td>
       <td><span class="pill prio-${p.priority}">${p.priority}</span></td>
-      <td>${p.nextAction?esc(p.nextAction):'<span style="color:var(--ink-3)">‚Äî</span>'}${p.nextActionDate?`<div class="num ${dueClass(p.nextActionDate)}" style="font-size:12.5px">${dueWord(p.nextActionDate)}</div>`:""}</td>
+      <td>${p.nextAction?esc(p.nextAction):'<span style="color:var(--ink-3)">—</span>'}${p.nextActionDate?`<div class="num ${dueClass(p.nextActionDate)}" style="font-size:12.5px">${dueWord(p.nextActionDate)}</div>`:""}</td>
     </tr>`).join("");
   return `<div class="view-title"><h2>Partnerships</h2>
-      <input type="search" id="searchBox" placeholder="Search brand, contact, sector‚Ä¶" value="${esc(search)}" style="max-width:280px;margin-left:auto">
+      <input type="search" id="searchBox" placeholder="Search brand, contact, sector…" value="${esc(search)}" style="max-width:280px;margin-left:auto">
     </div>
     <div class="table-wrap"><table>
       <thead><tr><th>Brand</th><th>Contact</th><th>Stage</th><th class="r">Value</th><th>Priority</th><th>Next action</th></tr></thead>
-      <tbody>${rows||`<tr><td colspan="6"><div class="empty">${q?"No matches for ‚Äú"+esc(search)+"‚Äù.":"No partnerships yet ‚Äî add your first with the + Partnership button."}</div></td></tr>`}</tbody>
+      <tbody>${rows||`<tr><td colspan="6"><div class="empty">${q?"No matches for “"+esc(search)+"”.":"No partnerships yet — add your first with the + Partnership button."}</div></td></tr>`}</tbody>
     </table></div>`;
 }
 
@@ -580,7 +580,7 @@ function renderWeekly(){
       <span class="t-title">${esc(x.title)}</span>
       ${p?`<button class="partner-chip" data-action="open-partner" data-id="${p.id}" title="Open ${esc(p.brand)}">${esc(p.brand)}</button>`:""}
       <span class="pill prio-${x.priority}">${x.priority}</span>
-      <button class="icon-btn" data-action="delete-task" data-id="${x.id}" title="Delete task" aria-label="Delete task">‚úï</button>
+      <button class="icon-btn" data-action="delete-task" data-id="${x.id}" title="Delete task" aria-label="Delete task">✕</button>
     </div>`};
 
   const days=DAY_NAMES.map((name,i)=>{
@@ -594,15 +594,15 @@ function renderWeekly(){
   }).join("");
 
   return `<div class="week-bar">
-      <button class="btn" data-action="week" data-dir="-1" aria-label="Previous week">‚Äπ</button>
+      <button class="btn" data-action="week" data-dir="-1" aria-label="Previous week">‹</button>
       <span class="range num">${fmtRange(mon,sun)}</span>
-      <button class="btn" data-action="week" data-dir="1" aria-label="Next week">‚Ä∫</button>
+      <button class="btn" data-action="week" data-dir="1" aria-label="Next week">›</button>
       ${weekOffset!==0?'<button class="btn ghost" data-action="week-today">Back to this week</button>':""}
     </div>
-    ${overdue.length&&weekOffset===0?`<div class="overdue-panel"><h3>Overdue ¬∑ ${overdue.length}</h3>
+    ${overdue.length&&weekOffset===0?`<div class="overdue-panel"><h3>Overdue · ${overdue.length}</h3>
       ${overdue.map(x=>{const p=x.partnerId?partner(x.partnerId):null;
         return `<div class="task"><input type="checkbox" data-action="toggle-task" data-id="${x.id}" aria-label="Mark done">
-          <span class="t-title">${esc(x.title)} <span class="num" style="color:var(--risk);font-size:12.5px">¬∑ ${fmtShort(x.date)}</span></span>
+          <span class="t-title">${esc(x.title)} <span class="num" style="color:var(--risk);font-size:12.5px">· ${fmtShort(x.date)}</span></span>
           ${p?`<button class="partner-chip" data-action="open-partner" data-id="${p.id}">${esc(p.brand)}</button>`:""}
           <button class="btn ghost" style="font-size:12.5px;padding:3px 8px" data-action="move-today" data-id="${x.id}">Move to today</button></div>`}).join("")}
     </div>`:""}
@@ -632,20 +632,20 @@ function openPartnerModal(id){
       <div><label for="pfContact">Contact</label><input id="pfContact" name="contact" value="${p?esc(p.contact):""}"></div>
       <div><label for="pfRole">Contact role</label><input id="pfRole" name="role" value="${p?esc(p.role):""}"></div>
       <div><label for="pfEmail">Email</label><input id="pfEmail" name="email" type="email" value="${p?esc(p.email):""}"></div>
-      <div><label for="pfValue">Est. value (¬£)</label><input id="pfValue" name="value" type="number" min="0" step="100" value="${p&&p.value?p.value:""}"></div>
+      <div><label for="pfValue">Est. value (£)</label><input id="pfValue" name="value" type="number" min="0" step="100" value="${p&&p.value?p.value:""}"></div>
       <div><label for="pfStage">Stage</label><select id="pfStage" name="stage">${STAGES.map(s=>`<option ${p&&p.stage===s?"selected":""}>${s}</option>`).join("")}</select></div>
       <div><label for="pfPrio">Priority</label><select id="pfPrio" name="priority">${PRIOS.map(x=>`<option ${(p?p.priority:"Medium")===x?"selected":""}>${x}</option>`).join("")}</select></div>
       <div><label for="pfNext">Next action</label><input id="pfNext" name="nextAction" value="${p?esc(p.nextAction):""}" placeholder="e.g. Send proposal"></div>
       <div><label for="pfNextDate">Next action date</label><input id="pfNextDate" name="nextActionDate" type="date" value="${p?esc(p.nextActionDate):""}"></div>
       <div class="full"><label for="pfNotes">Notes</label><textarea id="pfNotes" name="notes" rows="3">${p?esc(p.notes):""}</textarea></div>
     </form>
-    ${p?`<div class="linked-tasks"><h3>Linked tasks ¬∑ ${lt.length}</h3>
+    ${p?`<div class="linked-tasks"><h3>Linked tasks · ${lt.length}</h3>
       <div id="ltList">${lt.map(x=>`<div class="task ${x.done?"done":""}">
         <input type="checkbox" ${x.done?"checked":""} data-action="toggle-task" data-id="${x.id}" aria-label="Mark done">
-        <span class="t-title">${esc(x.title)} <span class="num ${dueClass(x.done?"":x.date)}" style="font-size:12.5px;color:var(--ink-3)">¬∑ ${fmtShort(x.date)}</span></span>
-        <button class="icon-btn" data-action="delete-task" data-id="${x.id}" aria-label="Delete task">‚úï</button></div>`).join("")||'<div class="empty">No tasks linked yet.</div>'}</div>
+        <span class="t-title">${esc(x.title)} <span class="num ${dueClass(x.done?"":x.date)}" style="font-size:12.5px;color:var(--ink-3)">· ${fmtShort(x.date)}</span></span>
+        <button class="icon-btn" data-action="delete-task" data-id="${x.id}" aria-label="Delete task">✕</button></div>`).join("")||'<div class="empty">No tasks linked yet.</div>'}</div>
       <form class="lt-add" id="ltAdd">
-        <input name="title" required placeholder="Add a task for ${esc(p.brand)}‚Ä¶" aria-label="Task title">
+        <input name="title" required placeholder="Add a task for ${esc(p.brand)}…" aria-label="Task title">
         <input name="date" type="date" value="${todayIso()}" required aria-label="Task date">
         <button class="btn" type="submit">Add</button>
       </form></div>`:""}
@@ -684,7 +684,7 @@ function closeModal(force){const o=$("#overlay");if(o&&(force||!o.dataset.locked
 function render(){
   renderNav();
   const m=$("#main");
-  const note=state.meta&&state.meta.sampleNote?`<div class="sample-note"><span>This tracker is pre-loaded with sample data so you can see how it works ‚Äî edit it, or clear it and start fresh.</span><button data-action="clear-sample">Clear sample data</button><button data-action="keep-sample">Keep</button></div>`:"";
+  const note=state.meta&&state.meta.sampleNote?`<div class="sample-note"><span>This tracker is pre-loaded with sample data so you can see how it works — edit it, or clear it and start fresh.</span><button data-action="clear-sample">Clear sample data</button><button data-action="keep-sample">Keep</button></div>`:"";
   m.innerHTML=note+(tab==="dashboard"?renderDashboard():tab==="pipeline"?renderPipeline():tab==="partners"?renderPartners():renderWeekly());
   if(tab==="partners"){const sb=$("#searchBox");if(sb){sb.addEventListener("input",e=>{search=e.target.value;render();const nb=$("#searchBox");nb.focus();nb.setSelectionRange(nb.value.length,nb.value.length)})}}
   if(tab==="weekly"){$("#quickAdd").addEventListener("submit",e=>{
@@ -710,7 +710,7 @@ function wireDnD(){
       e.preventDefault();col.classList.remove("drag-over");
       if(!dragId)return;
       const p=partner(dragId);
-      if(p&&p.stage!==col.dataset.col){p.stage=col.dataset.col;p.updatedAt=Date.now();delete p.sample;save();render();toast(p.brand+" ‚Üí "+p.stage)}
+      if(p&&p.stage!==col.dataset.col){p.stage=col.dataset.col;p.updatedAt=Date.now();delete p.sample;save();render();toast(p.brand+" → "+p.stage)}
     });
   });
 }
@@ -778,10 +778,10 @@ document.addEventListener("click",e=>{
   else if(a==="sync-copy"){
     (navigator.clipboard?navigator.clipboard.writeText(syncCode):Promise.reject())
       .then(()=>toast("Code copied"))
-      .catch(()=>{const b=$("#codeBox");if(b){const r=document.createRange();r.selectNodeContents(b);const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Press ‚åòC to copy")}});
+      .catch(()=>{const b=$("#codeBox");if(b){const r=document.createRange();r.selectNodeContents(b);const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Press ⌘C to copy")}});
   }
   else if(a==="sync-disconnect"){
-    if(confirm("Disconnect this device? Your data stays safely online ‚Äî you can reconnect anytime with your sync code.")){
+    if(confirm("Disconnect this device? Your data stays safely online — you can reconnect anytime with your sync code.")){
       localStorage.removeItem(CODE_KEY);localStorage.removeItem(KEY);location.reload();
     }
   }
